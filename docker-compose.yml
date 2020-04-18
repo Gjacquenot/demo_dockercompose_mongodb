@@ -1,0 +1,26 @@
+version: '3'
+services:
+  app:
+    build: app
+    depends_on:
+    - mongodb
+    environment:
+    - MONGO_DB_USERNAME=test-user
+    - MONGO_DB_PASSWORD=test-password
+    - MONGO_DB_DATABASE=test-database
+    command: /bin/bash -c "sleep 25 && python app.py"
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    environment:
+    - MONGO_DATA_DIR=/data/db
+    - MONGO_LOG_DIR=/dev/null
+    - MONGO_INITDB_ROOT_USERNAME=admin-user
+    - MONGO_INITDB_ROOT_PASSWORD=admin-password
+    - MONGO_INITDB_DATABASE=test-database
+    volumes:
+    - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    - ./data/db:/data/db
+    ports:
+    - 27017-27019:27017-27019
+    command: mongod
